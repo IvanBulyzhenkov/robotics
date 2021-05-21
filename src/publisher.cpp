@@ -1,5 +1,6 @@
 #include <fstream>
 #include <iostream>
+#include <random>
 
 #include "ros/ros.h"
 #include "std_msgs/Float32.h"
@@ -28,6 +29,10 @@ int main(int argc, char **argv) {
   ros::Publisher y_pub = n.advertise<std_msgs::Float32>("y_pub", 1000);
   ros::Publisher phi_pub = n.advertise<std_msgs::Float32>("phi_pub", 1000);
 
+  ros::Publisher x_noise_pub = n.advertise<std_msgs::Float32>("x_noise_pub", 1000);
+  ros::Publisher y_noise_pub = n.advertise<std_msgs::Float32>("y_noise_pub", 1000);
+  ros::Publisher phi_noise_pub = n.advertise<std_msgs::Float32>("phi_noise_pub", 1000);
+
   ros::Subscriber v_sub = n.subscribe("v_pub", 1000, vCallback);
   ros::Subscriber w_sub = n.subscribe("w_pub", 1000, wCallback);
 
@@ -39,6 +44,11 @@ int main(int argc, char **argv) {
   
   double prev_time = ros::Time::now().toSec();
 
+  const double mean = 0.0;
+  const double std_dev = 0.5;
+  std::default_random_engine generator;
+  std::normal_distribution<double> dist(mean, std_dev);
+  
   while (ros::ok()) {
     std_msgs::Float32 x;
     std_msgs::Float32 y;
@@ -57,6 +67,14 @@ int main(int argc, char **argv) {
     x_pub.publish(x);
     y_pub.publish(y);
     phi_pub.publish(phi);
+
+    x.data += dist(generator);
+    y.data += dist(generator);
+    phi.data += dist(generator);
+
+    x_noise_pub.publish(x);
+    y_noise_pub.publish(y);
+    phi_noise_pub.publish(phi);
 
     ros::spinOnce();
 

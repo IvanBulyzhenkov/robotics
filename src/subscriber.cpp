@@ -36,14 +36,14 @@ int main(int argc, char **argv) {
 
   ros::init(argc, argv, "listener");
 
-  ros::NodeHandle n;
+  ros::NodeHandle nh;
 
-  ros::Subscriber x_sub = n.subscribe("x_pub", 1000, xCallback);
-  ros::Subscriber y_sub = n.subscribe("y_pub", 1000, yCallback);
-  ros::Subscriber phi_sub = n.subscribe("phi_pub", 1000, phiCallback);
+  ros::Subscriber x_sub = nh.subscribe("x_pub", 1000, xCallback);
+  ros::Subscriber y_sub = nh.subscribe("y_pub", 1000, yCallback);
+  ros::Subscriber phi_sub = nh.subscribe("phi_pub", 1000, phiCallback);
 
-  ros::Publisher v_pub = n.advertise<std_msgs::Float32>("v_pub", 1000);
-  ros::Publisher w_pub = n.advertise<std_msgs::Float32>("w_pub", 1000);
+  ros::Publisher v_pub = nh.advertise<std_msgs::Float32>("v_pub", 1000);
+  ros::Publisher w_pub = nh.advertise<std_msgs::Float32>("w_pub", 1000);
   
 
   ros::Rate loop_rate(100);
