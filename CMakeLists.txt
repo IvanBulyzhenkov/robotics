@@ -134,6 +134,8 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(${PROJECT_NAME}_model src/publisher.cpp)
 add_executable(${PROJECT_NAME}_controller src/subscriber.cpp)
+add_executable(${PROJECT_NAME}_model_advanced src/publisher_advanced.cpp)
+add_executable(${PROJECT_NAME}_controller_advanced src/subscriber_advanced.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -152,6 +154,14 @@ target_link_libraries(${PROJECT_NAME}_model
 )
 
 target_link_libraries(${PROJECT_NAME}_controller
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(${PROJECT_NAME}_model_advanced
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(${PROJECT_NAME}_controller_advanced
   ${catkin_LIBRARIES}
 )
 

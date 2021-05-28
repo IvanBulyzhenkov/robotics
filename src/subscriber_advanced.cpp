@@ -21,11 +21,14 @@ void phiCallback(const std_msgs::Float32 data) {
 }
 
 int main(int argc, char **argv) {
+  double c_1 = 1.0;
+  double c_2 = 1.0;
+  
   double k_v = 0.5;
   double k_w = 0.5;
 
-  double x_ref = 80;
-  double y_ref = -100;
+  double x_ref = 8;
+  double y_ref = -10;
   double phi_ref = atan(x_ref / y_ref);
 
   double v_cur;
@@ -48,7 +51,10 @@ int main(int argc, char **argv) {
 
   ros::Rate loop_rate(100);
 
-  double tolerance = 0.000001;
+  double tolerance = 0.01;
+
+  double prev_time = ros::Time::now().toSec();
+  double start_time = ros::Time::now().toSec();
 
   while (ros::ok) {
      
@@ -63,7 +69,8 @@ int main(int argc, char **argv) {
       break;
     }
 
-    v_cur = -k_v * ((x - x_ref) * sin(phi) + (y - y_ref) * cos(phi));
+    v_cur = -c_1 * (sin(phi) * (x + k_v * (x - x_ref) / (ros::Time::now().toSec() - prev_time) * (ros::Time::now().toSec() - start_time)) + 
+                    cos(phi) * (y + k_v * (y - y_ref) / (ros::Time::now().toSec() - prev_time) * (ros::Time::now().toSec() - start_time)));
     if (v_cur > 0.5) {
       v_cur = 0.5;
     }
@@ -74,12 +81,12 @@ int main(int argc, char **argv) {
     v.data = v_cur;
 
     phi_ref = atan((x - x_ref) / (y - y_ref));
-    w_cur = -k_w * (phi - phi_ref);
-    if (w_cur > 0.01) {
-      w_cur = 0.01;
+    w_cur = -c_2 * (phi + k_w * (phi - phi_ref) / (ros::Time::now().toSec() - prev_time) * (ros::Time::now().toSec() - start_time));
+    if (w_cur > 0.1) {
+      w_cur = 0.1;
     }
-    if (w_cur < -0.01) {
-      w_cur = -0.01;
+    if (w_cur < -0.1) {
+      w_cur = -0.1;
     }
 
     w.data = w_cur;
@@ -89,6 +96,7 @@ int main(int argc, char **argv) {
 
     ros::spinOnce();
 
+    prev_time = ros::Time::now().toSec();
     loop_rate.sleep();
   }
   

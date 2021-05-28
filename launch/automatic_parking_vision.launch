@@ -1,0 +1,14 @@
+<launch>
+  <node pkg="ar_track_alvar" type="individualMarkersNoKinect" name="ar_track_alvar" respawn="false" output="screen">
+    <param name="marker_size"           type="double" value="10.0" />
+    <param name="max_new_marker_error"  type="double" value="0.08" />
+    <param name="max_track_error"       type="double" value="0.2" />
+    <param name="output_frame"          type="string" value="/base_footprint" />
+
+    <remap from="camera_image"  to="/camera/color/image_raw" />
+    <remap from="camera_info"   to="/camera/color/camera_info" />
+  </node>
+
+  <node pkg="bulyzhenkov" type="parking.py" name="parking" output="screen">
+  </node>
+</launch>
