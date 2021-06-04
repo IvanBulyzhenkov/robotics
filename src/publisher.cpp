@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
     
     x_cur = x_cur + v * sin(phi_cur) * (ros::Time::now().toSec() - prev_time);
     y_cur = y_cur + v * cos(phi_cur) * (ros::Time::now().toSec() - prev_time);
-    phi_cur = phi_cur + w * (ros::Time::now().toSec() - prev_time);
+    phi_cur = phi_cur + w;
 
     x.data = x_cur;
     y.data = y_cur;

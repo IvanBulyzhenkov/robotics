@@ -24,11 +24,11 @@ int main(int argc, char **argv) {
   double c_1 = 1.0;
   double c_2 = 1.0;
   
-  double k_v = 0.5;
-  double k_w = 0.5;
+  double k_v = 1.0;
+  double k_w = 1.0;
 
-  double x_ref = 8;
-  double y_ref = -10;
+  double x_ref = 1;
+  double y_ref = 1;
   double phi_ref = atan(x_ref / y_ref);
 
   double v_cur;
@@ -56,17 +56,33 @@ int main(int argc, char **argv) {
   double prev_time = ros::Time::now().toSec();
   double start_time = ros::Time::now().toSec();
 
+  const int number_of_points = 3;
+  int count = 0;
+
   while (ros::ok) {
      
     if (abs(x - x_ref) < tolerance && abs(y - y_ref) < tolerance) {
-      v_cur = 0.0;
-      w_cur = 0.0;
-      v.data = v_cur;
-      w.data = w_cur;
-      v_pub.publish(v);
-      w_pub.publish(w);
-      std::cout<<"Goal reached"<<std::endl;
-      break;
+      count++;
+      if (count == 1) {
+        x_ref = 2;
+        y_ref = 1;
+        phi_ref = atan(x_ref / y_ref);
+      }
+      if (count == 2) {
+        x_ref = 1.5;
+        y_ref = 0.5;
+        phi_ref = atan(x_ref / y_ref);
+      }
+      if (count == number_of_points) {
+        v_cur = 0.0;
+        w_cur = 0.0;
+        v.data = v_cur;
+        w.data = w_cur;
+        v_pub.publish(v);
+        w_pub.publish(w);
+        std::cout<<"Goal reached"<<std::endl;
+        break;
+      }
     }
 
     v_cur = -c_1 * (sin(phi) * (x + k_v * (x - x_ref) / (ros::Time::now().toSec() - prev_time) * (ros::Time::now().toSec() - start_time)) + 

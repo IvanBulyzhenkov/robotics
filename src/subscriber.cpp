@@ -21,11 +21,11 @@ void phiCallback(const std_msgs::Float32 data) {
 }
 
 int main(int argc, char **argv) {
-  double k_v = 0.5;
-  double k_w = 0.5;
+  double k_v = 1.0;
+  double k_w = 1.0;
 
-  double x_ref = 80;
-  double y_ref = -100;
+  double x_ref = 1;
+  double y_ref = 1;
   double phi_ref = atan(x_ref / y_ref);
 
   double v_cur;
@@ -48,19 +48,35 @@ int main(int argc, char **argv) {
 
   ros::Rate loop_rate(100);
 
-  double tolerance = 0.000001;
+  double tolerance = 0.01;
+
+  const int number_of_points = 3;
+  int count = 0;
 
   while (ros::ok) {
      
     if (abs(x - x_ref) < tolerance && abs(y - y_ref) < tolerance) {
-      v_cur = 0.0;
-      w_cur = 0.0;
-      v.data = v_cur;
-      w.data = w_cur;
-      v_pub.publish(v);
-      w_pub.publish(w);
-      std::cout<<"Goal reached"<<std::endl;
-      break;
+      count++;
+      if (count == 1) {
+        x_ref = 2;
+        y_ref = 1;
+        phi_ref = atan(x_ref / y_ref);
+      }
+      if (count == 2) {
+        x_ref = 1.5;
+        y_ref = 0.5;
+        phi_ref = atan(x_ref / y_ref);
+      }
+      if (count == number_of_points) {
+        v_cur = 0.0;
+        w_cur = 0.0;
+        v.data = v_cur;
+        w.data = w_cur;
+        v_pub.publish(v);
+        w_pub.publish(w);
+        std::cout<<"Goal reached"<<std::endl;
+        break;
+      }
     }
 
     v_cur = -k_v * ((x - x_ref) * sin(phi) + (y - y_ref) * cos(phi));
