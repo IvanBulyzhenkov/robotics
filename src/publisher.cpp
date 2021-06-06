@@ -1,6 +1,8 @@
 #include <fstream>
 #include <iostream>
 
+#include "boost/math/constants/constants.hpp"
+
 #include "ros/ros.h"
 #include "std_msgs/Float32.h"
 
@@ -39,6 +41,8 @@ int main(int argc, char **argv) {
   
   double prev_time = ros::Time::now().toSec();
 
+  const double pi = boost::math::constants::pi<double>();
+
   while (ros::ok()) {
     std_msgs::Float32 x;
     std_msgs::Float32 y;
@@ -46,8 +50,11 @@ int main(int argc, char **argv) {
     
     x_cur = x_cur + v * sin(phi_cur) * (ros::Time::now().toSec() - prev_time);
     y_cur = y_cur + v * cos(phi_cur) * (ros::Time::now().toSec() - prev_time);
+    if (w > pi) {
+      w = 2 * pi - w; 
+    }
     phi_cur = phi_cur + w;
-
+    
     x.data = x_cur;
     y.data = y_cur;
     phi.data = phi_cur;    
